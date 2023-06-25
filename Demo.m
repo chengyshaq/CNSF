@@ -3,7 +3,7 @@ clc;
 addpath(genpath('.'));
 load('data/birds.mat');
     optmParameter.alpha   = 10^-3;                                                                                                                                                                                                                                                                              
-    optmParameter.gamma   = 10^-1;   
+    optmParameter.gamma   = 10^-3;   
     optmParameter.tuneParaOneTime = 1; 
     optmParameter.theta   = 100;
     optmParameter.maxIter            = 100;
@@ -40,9 +40,7 @@ for i = 1:modelparameter.repetitions
             cv_train_target=cv_train_target';
             cv_test_target=cv_test_target';
             
-           CL = Causal(cv_train_target ) ;              
-           cv_train_target = M(cv_train_target);  
-            [model_CNSF]  = CNSF( cv_train_data, cv_train_target',optmParameter,CL);
+            [model_CNSF]  = CNSF( cv_train_data, cv_train_target',optmParameter);
             Outputs=cv_test_data*model_CNSF;           
             Outputs=Outputs';
             Pre_Labels=sign( Outputs);

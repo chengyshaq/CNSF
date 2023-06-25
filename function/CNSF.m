@@ -1,4 +1,4 @@
-function [model_CNSF] = CNSF(X, Y, optmParameter,CL)
+function [model_CNSF] = CNSF(X, Y, optmParameter)
 
  alpha          = optmParameter.alpha;
 
@@ -7,15 +7,15 @@ maxIter         = optmParameter.maxIter;
 miniLossMargin  =  optmParameter.minimumLossMargin;
 theta           = optmParameter.theta;
 
-%% initialization
+CL = Causal(Y') ;              
+P = ICNE(Y);  
+Y =P;
 [~,num_dim]=size(X);
-% label correlation C
 C = pdist2(Y', Y', 'cosine');
 R = diag(sum(C)) - C;
 R = CL.*R;
 
 XTX = X'*X;
-
  W_s   = (XTX + theta*eye(num_dim)) \ (X'*Y);
  W_s_1 = W_s;
     iter    = 1;
@@ -30,8 +30,7 @@ while iter <= maxIter
        bk     = (1 + sqrt(4*bk^2 + 1))/2;
        W_s_1 = W_s;
        W_s  = softthres(Gw_s_k,alpha/Lip);
-       
-       
+        
         partA = 0.5*norm((X*W_s-Y),'fro')^2; 
         partB = trace(R*(W_s'*W_s));
         sparsity = sum(sum(W_s~=0));
